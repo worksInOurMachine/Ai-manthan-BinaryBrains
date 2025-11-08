@@ -1,16 +1,19 @@
 "use client";
 
-import SpotlightCard from "@/components/ui/soptlight-card";
-import Link from "next/link";
-import React from "react";
-import { useState } from "react";
-import { MapPin, MessageSquare, ArrowRight, Eye } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-const roadmap = window.localStorage.getItem("roadmap");
+import { ArrowRight, Eye, MapPin, MessageSquare } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+ 
 const page = () => {
   const router = useRouter();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [roadmap, setRoadmap] = useState<string | null>(null);
+
+  useEffect(() => {
+    const item = window.localStorage.getItem("roadmap");
+    setRoadmap(item);
+  }, []);
 
   const cards = [
     {
