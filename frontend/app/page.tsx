@@ -67,7 +67,7 @@ export default function HomePage() {
           </div>
         </section>
       </AnimatedSection>
-
+     {/* @ts-ignore */}
       <AnimatedSection id="features" className="border-t border-white/10">
         <section className="container mx-auto px-4 py-24 text-center">
           <h2
