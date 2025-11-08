@@ -185,32 +185,44 @@ Your role is to simulate a real human interviewer—friendly, natural, but struc
       return new Response("Upstream failed", { status: 502 });
     }
 
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        const reader = upstreamResponse.body!.getReader();
-        const decoder = new TextDecoder("utf-8");
+     const data = await upstreamResponse.json();
 
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
+    let content:any = {result:data?.choices?.[0]?.message?.content?.trim() || ""}
 
-          const textChunk = decoder.decode(value);
-          controller.enqueue(encoder.encode(textChunk));
-        }
+    return new Response(
+  JSON.stringify({ content }),
+  {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  }
+);
 
-        controller.close();
-      },
-    });
+    // const encoder = new TextEncoder();
+    // const stream = new ReadableStream({
+    //   async start(controller) {
+    //     const reader = upstreamResponse.body!.getReader();
+    //     const decoder = new TextDecoder("utf-8");
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Transfer-Encoding": "chunked",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-      },
-    });
+    //     while (true) {
+    //       const { value, done } = await reader.read();
+    //       if (done) break;
+
+    //       const textChunk = decoder.decode(value);
+    //       controller.enqueue(encoder.encode(textChunk));
+    //     }
+
+    //     controller.close();
+    //   },
+    // });
+
+    // return new Response(stream, {
+    //   headers: {
+    //     "Content-Type": "text/plain; charset=utf-8",
+    //     "Transfer-Encoding": "chunked",
+    //     "Cache-Control": "no-cache",
+    //     Connection: "keep-alive",
+    //   },
+    // });
   } catch (error) {
     console.log("API Error:", error);
     return Response.json(
