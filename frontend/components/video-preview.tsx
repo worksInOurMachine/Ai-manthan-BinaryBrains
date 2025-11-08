@@ -323,52 +323,128 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
 
     const avg = (key: keyof EmotionData) =>
       data.reduce((sum, d) => sum + d[key], 0) / data.length;
+
     const feedback: string[] = [];
 
+    // --- Calculate Averages ---
     const conf = avg("confidence");
     const nerv = avg("nervous");
     const happ = avg("happy");
     const sadScore = avg("sad");
-    const smileScore = avg("surprised"); // can also track smile separately
-    const blink = avg("blink"); // can also track blink separately
+    const smileScore = avg("surprised"); // using 'surprised' as smile proxy
+    const blink = avg("blink");
 
-    /* feedback.push(`Confidence: ${(conf * 100).toFixed(1)}%`);
-    feedback.push(`Nervousness: ${(nerv * 100).toFixed(1)}%`);
-    feedback.push(`Happiness: ${(happ * 100).toFixed(1)}%`);
-    feedback.push(`Sadness: ${(sadScore * 100).toFixed(1)}%`);
-    feedback.push(`Smile/Surprise: ${(smileScore * 100).toFixed(1)}%`);
-    feedback.push(`Blink Rate: ${blink.toFixed(1)} blinks/min`); */
+    // --- Format Scores ---
+    const confidenceScore = `${(conf * 100).toFixed(1)}%`;
+    const nervousnessScore = `${(nerv * 100).toFixed(1)}%`;
+    const happinessScore = `${(happ * 100).toFixed(1)}%`;
+    const sadnessScore = `${(sadScore * 100).toFixed(1)}%`;
+    const smileSurpriseScore = `${(smileScore * 100).toFixed(1)}%`;
+    const blinkRateScore = `${blink.toFixed(1)} blinks/min`;
 
+    // --- Detailed Feedback & Interpretation ---
+
+    // CONFIDENCE
+    if (conf >= 0.85) {
+      feedback.push(
+        `**Confidence (${confidenceScore}):** Very strong confidence observed. Maintained stable gaze, steady tone, and composed posture — indicates high self-assurance and readiness for professional interviews.`
+      );
+    } else if (conf >= 0.6) {
+      feedback.push(
+        `**Confidence (${confidenceScore}):** Moderate confidence detected. Some hesitation or minor loss of eye contact noticed. With improved voice projection and clearer delivery, confidence can reach optimal level.`
+      );
+    } else {
+      feedback.push(
+        `**Confidence (${confidenceScore}):** Low confidence detected. Candidate seemed uncertain or avoided eye contact. Recommend mock interviews and self-recorded practice to build composure and assertiveness.`
+      );
+    }
+
+    // NERVOUSNESS
+    if (nerv >= 0.5) {
+      feedback.push(
+        `**Nervousness (${nervousnessScore}):** High nervousness. Frequent blinking, fidgeting, or micro-expressions of tension noted. Recommend practicing breathing and relaxation before interviews.`
+      );
+    } else if (nerv >= 0.25) {
+      feedback.push(
+        `**Nervousness (${nervousnessScore}):** Slight nervousness observed, typical for interviews. Generally composed but minor signs of tension under stress.`
+      );
+    } else {
+      feedback.push(
+        `**Nervousness (${nervousnessScore}):** Calm and stable demeanor maintained throughout. Strong self-regulation and composure.`
+      );
+    }
+
+    // HAPPINESS / POSITIVITY
+    if (happ >= 0.6) {
+      feedback.push(
+        `**Happiness (${happinessScore}):** Friendly and approachable presence. Expressed enthusiasm and positive engagement — ideal for HR and client-facing roles.`
+      );
+    } else if (happ >= 0.4) {
+      feedback.push(
+        `**Happiness (${happinessScore}):** Neutral mood. Could benefit from slightly more warmth or smiling to project openness.`
+      );
+    } else {
+      feedback.push(
+        `**Happiness (${happinessScore}):** Low positive affect detected. Facial tone appeared serious or disengaged. Encourage natural smiling and expressive communication to enhance presence.`
+      );
+    }
+
+    // SADNESS
+    if (sadScore >= 0.5) {
+      feedback.push(
+        `**Sadness (${sadnessScore}):** Noticeable sadness or downward expressions observed. This may affect perceived enthusiasm. Recommend focusing on active listening posture and energy modulation.`
+      );
+    } else if (sadScore >= 0.25) {
+      feedback.push(
+        `**Sadness (${sadnessScore}):** Slight emotional downturn detected. Occasional seriousness in tone; overall balanced but could show more enthusiasm.`
+      );
+    } else {
+      feedback.push(
+        `**Sadness (${sadnessScore}):** Minimal sadness observed — positive emotional stability maintained.`
+      );
+    }
+
+    // SMILE / SURPRISE (as Expressiveness)
+    if (smileScore >= 0.6) {
+      feedback.push(
+        `**Expressiveness (${smileSurpriseScore}):** Excellent facial expressiveness. Used smiles and emotional variation effectively to convey engagement and interest.`
+      );
+    } else if (smileScore >= 0.3) {
+      feedback.push(
+        `**Expressiveness (${smileSurpriseScore}):** Moderate expressiveness. Facial engagement present but could be more dynamic during key responses.`
+      );
+    } else {
+      feedback.push(
+        `**Expressiveness (${smileSurpriseScore}):** Limited emotional variation detected. May appear rigid or overly serious; encourage natural expressiveness to improve communication perception.`
+      );
+    }
+
+    // BLINK RATE ANALYSIS
+    if (blink > 25) {
+      feedback.push(
+        `**Blink Rate (${blinkRateScore}):** Excessive blinking detected — may indicate nervousness or stress. Recommend relaxation techniques and better focus maintenance.`
+      );
+    } else if (blink < 5) {
+      feedback.push(
+        `**Blink Rate (${blinkRateScore}):** Very low blinking frequency — may indicate forced attention or discomfort. Try maintaining natural blinking rhythm for comfort and authenticity.`
+      );
+    } else {
+      feedback.push(
+        `**Blink Rate (${blinkRateScore}):** Normal blinking rate observed — indicates balanced composure and attentiveness.`
+      );
+    }
+
+    // --- Emotion Summary for the JSON prompt ---
     feedback.push(
-      conf < 0.8
-        ? "Try to maintain eye contact and speak confidently, need to improve confidence."
-        : "Good job maintaining confidence."
+      `Overall Emotional Summary: Candidate displayed ${
+        conf >= 0.7 ? "high" : conf >= 0.5 ? "moderate" : "low"
+      } confidence, ${
+        nerv > 0.3 ? "some nervousness" : "strong composure"
+      }, and a ${happ >= 0.5 ? "positive" : "neutral"} demeanor. ${
+        blink >= 25 ? "Slight anxiety detected through eye movement." : ""
+      }`
     );
-    feedback.push(
-      nerv > 0.2
-        ? "Try to relax and avoid fidgeting, it may indicate nervousness. Take deep breaths, need to decrease nervousness."
-        : "Good job staying calm, no nervousness."
-    );
-    feedback.push(
-      happ < 0.45
-        ? "Smile more naturally to appear approachable, need to smile and be happy."
-        : "Good job being friendly."
-    );
-    feedback.push(
-      sadScore > 0.3
-        ? "Avoid showing too much sadness; stay positive."
-        : "Good job staying positive."
-    );
-    feedback.push(
-      blink < 5
-        ? "Remember to blink naturally to avoid staring."
-        : "Good job blinking normally."
-    );
-    feedback.push(
-      blink > 20
-        ? "Try to reduce excessive blinking, it may indicate nervousness."
-        : ""
-    );
+
     return feedback.join("\n");
   };
 
@@ -383,7 +459,7 @@ export default function EmotionAnalyzerPage({ startFn, stopFn }: any) {
 
     // Show feedback
     const feedback = generateFeedback();
- //    alert(`Session Feedback:\n\n${feedback}`);
+    //    alert(`Session Feedback:\n\n${feedback}`);
     // Optionally, console.log for dev
 
     return feedback;
