@@ -46,9 +46,9 @@ export default async function RootLayout({
             raysColor="#00ffff"
             raysSpeed={1.5}
             lightSpread={0.8}
-            rayLength={1.2}
+            rayLength={7}
             followMouse={true}
-            mouseInfluence={0.1}
+            mouseInfluence={0.3}
             noiseAmount={0.1}
             distortion={0.05}
             className="custom-rays"

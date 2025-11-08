@@ -11,6 +11,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useSearchParams } from "next/navigation";
 
 interface Message {
   id: string;
@@ -117,7 +118,7 @@ const MarkdownComponents: object = {
 const QuickPrompts: React.FC<{ onPromptSelect: (prompt: string) => void }> = ({
   onPromptSelect,
 }) => (
-  <div className="text-center p-8 border rounded-xl bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-xl">
+  <div className="text-center p-8 border rounded-xl bg-white dark:bg-transparent backdrop-blur-2xl border-slate-200 dark:border-slate-700 shadow-xl">
     <Bot className="h-10 w-10 mx-auto text-blue-600 mb-4" />
     <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
       Welcome to your AI Career Mentor
@@ -197,7 +198,15 @@ const MessageBubble: React.FC<{ message: Message }> = ({ message }) => {
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw]}
         >
-          {message.content}
+          {Array.isArray(message.content)
+            ? message.content
+                .map((c) =>
+                  c.type === "image_url"
+                    ? `![image](${c.image_url.url})`
+                    : c.text || ""
+                )
+                .join("\n")
+            : message.content}
         </ReactMarkdown>
         <span
           className={`text-xs mt-2 block ${
@@ -264,6 +273,20 @@ const AIChat = memo(() => {
   const { messages, isLoading, sendMessage, clearMessages } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [initialScroll, setInitialScroll] = useState(false);
+  const params = useSearchParams();
+  console.log("Search Params:", params.toString());
+
+  useEffect(() => {
+    const isTaskParam = params.get("task") || false;
+    console.log("isTaskParam:", isTaskParam);
+    if (isTaskParam === "true") {
+      const task = localStorage.getItem("task");
+      if (!task) return;
+      clearMessages();
+      sendMessage(JSON.parse(task || ""));
+      localStorage.removeItem("task");
+    }
+  }, []);
 
   useEffect(() => {
     const scrollToBottom = () => {

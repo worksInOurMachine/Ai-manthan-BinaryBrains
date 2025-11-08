@@ -26,6 +26,26 @@ export default function ReportsPage() {
 
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
 
+  const handleAnalyseResume = ({ url }: { url: string }) => {
+    if (!url) {
+      return;
+    }
+    localStorage.setItem(
+      "task",
+      JSON.stringify([
+        {
+          type: "text",
+          text: `Analyse my resume properly and score it for ats and give me tips to improve`,
+        },
+        {
+          type: "image_url",
+          image_url: { url: url },
+        },
+      ])
+    );
+    router.push(`/chat?task=true`);
+  };
+
   const interviews: any[] = data?.data || [];
 
   if (isLoading)
@@ -79,12 +99,28 @@ export default function ReportsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                 >
-                  <Card className="bg-[#1e293b]/80 border border-gray-700 hover:border-indigo-500 transition-all duration-300 shadow-xl backdrop-blur-md rounded-2xl p-5 flex flex-col justify-between h-full">
-                    <div className="space-y-2">
-                      <p className="text-lg font-semibold text-indigo-400">
+                  <Card
+                    className="
+      bg-[#1e293b]/80 
+      border border-gray-700 
+      hover:border-indigo-500/70 
+      transition-all duration-300 
+      shadow-2xl 
+      backdrop-blur-md 
+      rounded-2xl 
+      p-6 
+      flex flex-col justify-between 
+      h-full
+    "
+                  >
+                    <div className="space-y-4">
+                      {/* Title */}
+                      <p className="text-xl font-semibold text-indigo-400 tracking-wide">
                         {interview.details || "Untitled Interview"}
                       </p>
-                      <div className="text-sm text-gray-400 space-y-1">
+
+                      {/* Stats */}
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-400">
                         <p>
                           <span className="font-medium text-gray-300">
                             Mode:
@@ -97,13 +133,13 @@ export default function ReportsPage() {
                           </span>{" "}
                           {interview.difficulty}
                         </p>
-                        <p>
+                        <p className="col-span-2">
                           <span className="font-medium text-gray-300">
                             Skills:
                           </span>{" "}
                           {interview.skills}
                         </p>
-                        <p>
+                        <p className="col-span-2">
                           <span className="font-medium text-gray-300">
                             Questions:
                           </span>{" "}
@@ -112,10 +148,19 @@ export default function ReportsPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 mt-6">
+                    {/* Buttons Section */}
+                    <div className="flex flex-col flex-wrap sm:flex-col gap-3 mt-8 pt-4 border-t border-gray-700/60">
+                      {/* Primary Button */}
                       <Button
                         variant="default"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white w-full sm:w-auto"
+                        className="
+          flex-1 bg-indigo-600 hover:bg-indigo-500 
+          text-white font-semibold 
+          rounded-lg py-2.5 
+          shadow-[0_0_15px_-4px_rgba(99,102,241,0.5)]
+          hover:shadow-[0_0_25px_-4px_rgba(99,102,241,0.6)]
+          transition-all duration-300
+        "
                         onClick={() => {
                           try {
                             const parsed =
@@ -123,22 +168,50 @@ export default function ReportsPage() {
                                 ? JSON.parse(interview.report)
                                 : interview.report;
                             setSelectedReport(parsed);
-                          } catch (e) {
+                          } catch {
                             alert("Invalid report format");
                           }
                         }}
                       >
                         View Report
                       </Button>
-                      <Button
-                        variant="secondary"
-                        className="border-gray-600 text-gray-300  w-full sm:w-auto"
-                        onClick={() =>
-                          router.push(`/interview/${interview.documentId}`)
-                        }
-                      >
-                        Retake Interview
-                      </Button>
+
+                      {/* Secondary Buttons */}
+                      <div className="flex flex-1 gap-3 sm:gap-2">
+                        <Button
+                          variant="secondary"
+                          className="
+            flex-1 border border-gray-600 text-gray-200 
+            bg-transparent hover:bg-gray-800/60 
+            hover:border-indigo-500/70
+            rounded-lg py-2.5 
+            transition-all duration-300
+          "
+                          onClick={() =>
+                            router.push(`/interview/${interview.documentId}`)
+                          }
+                        >
+                          Retake
+                        </Button>
+
+                        {interview?.resume && (
+                          <Button
+                            variant="secondary"
+                            className="
+              flex-1 border border-gray-600 text-gray-200 
+              bg-transparent hover:bg-gray-800/60 
+              hover:border-indigo-500/70
+              rounded-lg py-2.5 
+              transition-all duration-300
+            "
+                            onClick={() =>
+                              handleAnalyseResume({ url: interview.resume })
+                            }
+                          >
+                            Analyze Resume
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </Card>
                 </motion.div>

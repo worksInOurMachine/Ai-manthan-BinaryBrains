@@ -71,9 +71,9 @@ const Navbar = () => {
               <Link
                 href="/create-interview"
                 className="rounded-lg px-4 py-2 text-xs font-semibold 
-                text-white bg-gradient-to-r from-green-600 to-emerald-500 
-                hover:from-green-500 hover:to-emerald-400 transition-all shadow-lg shadow-green-600/20 
-                hover:shadow-green-400/40 duration-300"
+                text-white bg-gradient-to-r from-blue-600 to-blue-500 
+                hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-600/20 
+                hover:shadow-blue-400/40 duration-300"
               >
                 Start Interview
               </Link>
