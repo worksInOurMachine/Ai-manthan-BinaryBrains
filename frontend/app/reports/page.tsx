@@ -133,7 +133,7 @@ export default function ReportsPage() {
                           </span>{" "}
                           {interview.difficulty}
                         </p>
-                        <p className="col-span-2">
+                        <p className="col-span-2 text-wrap break-all">
                           <span className="font-medium text-gray-300">
                             Skills:
                           </span>{" "}
