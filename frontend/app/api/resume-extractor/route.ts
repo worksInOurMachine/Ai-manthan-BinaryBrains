@@ -1,9 +1,9 @@
 export async function POST(req: Request) {
   try {
-    const { messages=[] } = await req.json();
+    const { messages = [] } = await req.json();
 
     const model = "mistral";
-const systemPrompt =  `
+    const systemPrompt = `
 You are a highly accurate resume parsing model. You receive a resume image and must extract key data fields needed to configure an AI interview.
 
 Your output must be a **strict JSON object** matching the structure below — no extra text, markdown, or explanations.
@@ -25,7 +25,7 @@ Your output must be a **strict JSON object** matching the structure below — no
 }
 
 ### Rules
-1. Output **only valid JSON**, no extra characters or text dont give '''json just start with { and end with }.
+1. Output **only valid JSON**, no extra characters or text don't give "'''json" just start with { and end with }.
 2. Include all keys, even if null or empty.
 3. Use concise values — no long paragraphs.
 4. For 'skills', join them as a comma-separated string for easier use in forms but remember if it have space in it (critical thinking) then write it as (criticalThinking).
@@ -45,28 +45,28 @@ Goal: Return structured data that can prefill the interview setup UI (candidate 
       },
       body: JSON.stringify({
         model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages
-        ],
+        messages: [{ role: "system", content: systemPrompt }, ...messages],
       }),
     });
 
     const data = await response.json();
 
-  let content = data?.choices?.[0]?.message?.content?.trim() || "";
+    let content = data?.choices?.[0]?.message?.content?.trim() || "";
+    const cleaned = content
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+    console.log("Generated Resume Extraction:", cleaned);
 
-  // console.log("Generated Resume Extraction:", content);
-
-    return new Response(content, {
+    return new Response(cleaned, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Data Extraction error:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to Extract Data" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Failed to Extract Data" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
