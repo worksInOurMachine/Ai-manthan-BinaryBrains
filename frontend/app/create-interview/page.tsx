@@ -126,7 +126,7 @@ function Page() {
 
   // --- STYLES ---
   const InputClasses = `p-3 w-full bg-white/10 text-white placeholder-white/70 rounded-lg border border-sky-400 focus:ring-2 focus:ring-sky-300 focus:border-sky-300 transition duration-150 ease-in-out shadow-sm backdrop-blur-md`;
-  const SelectClasses = `${InputClasses} cursor-pointer`;
+  const SelectClasses = `${InputClasses} text-black cursor-pointer`;
   const LabelClasses = "block font-semibold mb-2 text-white text-base";
   const CardClasses =
     "p-8 w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg border border-sky-400/20";
@@ -225,8 +225,12 @@ function Page() {
                   onChange={(e) => setMode(e.target.value)}
                   className={SelectClasses}
                 >
-                  <option value="HR">HR / Behavioral</option>
-                  <option value="Technical">Technical</option>
+                  <option className="text-black" value="HR">
+                    HR / Behavioral
+                  </option>
+                  <option className="text-black" value="Technical">
+                    Technical
+                  </option>
                 </select>
               </div>
 
@@ -237,9 +241,15 @@ function Page() {
                   onChange={(e) => setDifficulty(e.target.value)}
                   className={SelectClasses}
                 >
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
+                  <option className="text-black" value="easy">
+                    Easy
+                  </option>
+                  <option className="text-black" value="medium">
+                    Medium
+                  </option>
+                  <option className="text-black" value="hard">
+                    Hard
+                  </option>
                 </select>
               </div>
             </div>
@@ -291,11 +301,21 @@ function Page() {
               onChange={(e) => setQuestions(e.target.value)}
               className={SelectClasses}
             >
-              <option value="2">2 Questions (Quick)</option>
-              <option value="5">5 Questions</option>
-              <option value="10">10 Questions (Standard)</option>
-              <option value="15">15 Questions (Deep Dive)</option>
-              <option value="20">20 Questions (Comprehensive)</option>
+              <option className="text-black" value="2">
+                2 Questions (Quick)
+              </option>
+              <option className="text-black" value="5">
+                5 Questions
+              </option>
+              <option className="text-black" value="10">
+                10 Questions (Standard)
+              </option>
+              <option className="text-black" value="15">
+                15 Questions (Deep Dive)
+              </option>
+              <option className="text-black" value="20">
+                20 Questions (Comprehensive)
+              </option>
             </select>
           </div>
         </Step>
