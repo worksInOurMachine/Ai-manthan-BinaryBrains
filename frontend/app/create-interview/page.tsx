@@ -1,121 +1,138 @@
 "use client";
 import Orb from "@/components/Orb";
 import TrueFocus from "@/components/TrueFocus";
-import Stepper, { Step } from "@/components/ui/stepper"; // Stepper components assumed to be available
+import Stepper, { Step } from "@/components/ui/stepper";
 import { strapi } from "@/lib/api/sdk";
-import { number } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 function Page() {
-  const [candidateName, setCandidateName] = React.useState("");
-  const [resume, setResume] = React.useState<any>(null); // File object
-  const [mode, setMode] = React.useState("Technical");
-  const [difficulty, setDifficulty] = React.useState("medium");
-  const [skills, setSkills] = React.useState("");
-  const [topic, setTopic] = React.useState("");
-  const [questions, setQuestions] = React.useState("10");
-  const router = useRouter();
-  const { data } = useSession<any>();
+  const [candidateName, setCandidateName] = useState("");
+  const [resume, setResume] = useState<File | null>(null);
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+  const [mode, setMode] = useState("Technical");
+  const [difficulty, setDifficulty] = useState("medium");
+  const [skills, setSkills] = useState("");
+  const [topic, setTopic] = useState("");
+  const [questions, setQuestions] = useState("10");
   const [loading, setLoading] = useState(false);
 
-  //console.log(data);
+  const { data } = useSession<any>();
+  const router = useRouter();
+
+  // 🔹 Upload immediately when file changes
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setResume(file);
+    toast.loading("Uploading file...", { id: "upload" });
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await res.json();
+      const uploadedUrl = json.result;
+
+      if (uploadedUrl) {
+        setResumeUrl(uploadedUrl);
+        const AI_RES = await fetch("/api/resume-extractor", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "image_url",
+                    image_url: { url: uploadedUrl },
+                  },
+                ],
+              },
+            ],
+          }),
+        });
+        const aiData = await AI_RES.json();
+
+        if (aiData) {
+          setCandidateName(aiData.candidateName || "");
+          setSkills(aiData.skills || "");
+          setTopic(aiData.topic || "");
+          setDifficulty(aiData.difficulty || "medium");
+          setMode(aiData.mode || "Technical");
+        }
+
+        console.log("AI Resume Extraction:", aiData);
+        toast.success("Resume uploaded successfully", { id: "upload" });
+      } else {
+        toast.error("File upload failed", { id: "upload" });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error uploading file", { id: "upload" });
+    }
+  };
 
   const handleSubmitFinal = async () => {
     try {
       setLoading(true);
-      if (!skills || !topic) {
-        return toast.error("please provide skills and job role");
-      }
-      const finalData = {
-        resume: resume || null,
+
+      if (!candidateName) return toast.error("Please provide candidate name");
+      if (!data || !data.user) return toast.error("You must be logged in");
+      if (!mode) return toast.error("Please select interview mode");
+      if (!difficulty) return toast.error("Please select difficulty");
+      if (!skills) return toast.error("Please provide skills");
+      if (!topic) return toast.error("Please provide job role");
+      if (!questions) return toast.error("Please select number of questions");
+
+      // 🔹 Directly use uploaded file URL
+      const res = await strapi.create("interviews", {
+        resume: resumeUrl || null,
         mode,
         difficulty,
         skills: skills.split(" ").join(","),
-        topic,
-        questions,
-      };
-
-      if (!candidateName) {
-        return toast.error("Please provide candidate name");
-      }
-      if (!data || !data.user) {
-        return toast.error("You must be logged in to create an interview");
-      }
-      if (!mode) {
-        return toast.error("Please select interview mode");
-      }
-      if (!difficulty) {
-        return toast.error("Please select interview difficulty");
-      }
-      if (!skills) {
-        return toast.error("Please provide at least one skill");
-      }
-      if (!topic) {
-        return toast.error("Please provide job role");
-      }
-      if (!questions) {
-        return toast.error("Please select number of questions");
-      }
-
-      const formData = new FormData();
-
-      formData.append("image", resume);
-
-      const fileId = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const fileUrl = (await fileId.json()).result || null;
-
-      const res = await strapi.create("interviews", {
-        resume: fileUrl,
-        mode: mode,
-        difficulty: difficulty,
-        skills: skills,
         details: topic,
         numberOfQuestions: parseInt(questions),
-        user: data && data.user.id,
-        candidateName: candidateName || "",
+        user: data?.user?.id,
+        candidateName,
       });
-      console.log("Interview Created:", res);
-      toast.success("interview Created SuccessFully");
+
+      toast.success("Interview Created Successfully");
       router.push(`/interview/${res.data.documentId}`);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
-  const InputClasses =
-    "p-3 w-full bg-white text-black rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out shadow-sm";
-  const SelectClasses = `${InputClasses} appearance-none bg-white`;
-  const LabelClasses = "block font-semibold mb-2 text-white-700 text-base";
-  // Updated CardClasses to use bg-white for proper contrast and theme balance
-  const CardClasses = "p-6 md:p-8 bg-transparent  rounded-xl shadow-lg mb-6";
+  // --- STYLES ---
+  const PrimaryBlue = "blue-500";
+  const InputClasses = `p-3 w-full bg-white text-gray-900 rounded-lg border border-${PrimaryBlue} focus:ring-2 focus:ring-${PrimaryBlue} focus:border-${PrimaryBlue} transition duration-150 ease-in-out shadow-md`;
+  const SelectClasses = `${InputClasses} appearance-none`;
+  const LabelClasses = "block font-semibold mb-2 text-sky-400 text-base";
+  const CardClasses = "p-6 md:p-8 bg-transparent rounded-xl shadow-lg mb-6";
+  const FileInputClasses = `w-full text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-800 file:text-sky-300 hover:file:bg-blue-700`;
 
   return (
     <>
       {loading ? (
         <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
-          {/* <div style={{ width: "25%", height: "150px" }}>
-            <Orb
-              hoverIntensity={0.5}
-              rotateOnHover={true}
-              hue={0}
-              forceHoverState={false}
-            />
-          </div> */}
           <TrueFocus
             sentence="Generating Interview"
             manualMode={false}
             blurAmount={5}
-            borderColor="blue"
+            borderColor="cyan" // Blue theme accent color
             animationDuration={2}
             pauseBetweenAnimations={1}
           />
@@ -136,11 +153,12 @@ function Page() {
             {/* Step 1: Welcome */}
             <Step>
               <div className={CardClasses}>
-                {/* Updated text color to indigo for visibility and theme consistency */}
-                <h2 className="text-2xl font-bold text-white-700 mb-4">
-                  Welcome to the Interview Stepper! 👋
+                {/* Heading: Bright Sky Blue */}
+                <h2 className="text-2xl font-bold text-sky-400 mb-4">
+                  Welcome to the Interview!
                 </h2>
-                <p className="text-gray-500 leading-relaxed">
+                {/* Paragraph text: Light Gray for contrast */}
+                <p className="text-gray-400 leading-relaxed">
                   We'll guide you through setting up your personalized AI
                   interview. This process ensures the AI tailors the questions
                   to your exact needs, skills, and career focus.
@@ -151,7 +169,7 @@ function Page() {
             {/* Step 2: Mode, Difficulty, and Resume Upload */}
             <Step>
               <div className={CardClasses}>
-                <h2 className="text-2xl font-bold text-indigo-700 mb-6">
+                <h2 className="text-2xl font-bold text-sky-400 mb-6">
                   Step 2: Core Setup 🛠️
                 </h2>
 
@@ -173,15 +191,12 @@ function Page() {
                   </label>
                   <input
                     type="file"
-                    // Removed redundant ': any' type annotation
-                    onChange={(e: any) =>
-                      setResume(e.target.files ? e.target.files[0] : null)
-                    }
-                    accept="image/*"
-                    className="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                    onChange={handleFileChange}
+                    accept="image/*" // Added pdf to accepted file types
+                    className={FileInputClasses}
                   />
                   {resume && (
-                    <p className="mt-2 text-sm text-green-600">
+                    <p className="mt-2 text-sm text-lime-400">
                       Selected: **{resume.name}**
                     </p>
                   )}
@@ -217,12 +232,12 @@ function Page() {
             {/* Step 3: Skills and Topic */}
             <Step>
               <div className={CardClasses}>
-                <h2 className="text-2xl font-bold text-indigo-700 mb-6">
+                <h2 className="text-2xl font-bold text-sky-400 mb-6">
                   Step 3: Focus Area 🎯
                 </h2>
                 <div className="mb-6">
                   <label className={LabelClasses}>
-                    Key Skills (Comma separated)
+                    Key Skills (Space/Comma separated)
                   </label>
                   <input
                     type="text"
@@ -233,7 +248,7 @@ function Page() {
                     className={InputClasses}
                   />
                   {skills.length < 1 && (
-                    <p className="text-red-600 text-sm mt-1">
+                    <p className="text-red-500 text-sm mt-1">
                       Please add at least one skill.
                     </p>
                   )}
@@ -250,7 +265,7 @@ function Page() {
                     className={InputClasses}
                   />
                   {topic.length < 1 && (
-                    <p className="text-red-600 text-sm mt-1">
+                    <p className="text-red-500 text-sm mt-1">
                       Please provide a topic/focus.
                     </p>
                   )}
@@ -261,7 +276,7 @@ function Page() {
             {/* Step 4: Number of Questions */}
             <Step>
               <div className={CardClasses}>
-                <h2 className="text-2xl font-bold text-indigo-700 mb-6">
+                <h2 className="text-2xl font-bold text-sky-400 mb-6">
                   Step 4: Interview Length ⏱️
                 </h2>
                 <label className={LabelClasses}>Number of Questions</label>
@@ -270,7 +285,7 @@ function Page() {
                   onChange={(e) => setQuestions(e.target.value)}
                   className={SelectClasses}
                 >
-                  <option value="3">3 Questions (Quick)</option>
+                  <option value="2">2 Questions (Quick)</option>
                   <option value="5">5 Questions (Quick)</option>
                   <option value="10">10 Questions (Standard)</option>
                   <option value="15">15 Questions (Deep Dive)</option>
@@ -279,29 +294,13 @@ function Page() {
               </div>
             </Step>
 
-            {/* Custom Input Check (Kept for continuity) */}
-            {/* <Step>
-        <div className={CardClasses}>
-          <h2 className="text-2xl font-bold text-indigo-700 mb-6">
-            Custom Input Check (Optional)
-          </h2>
-          <label className={LabelClasses}>Your Name?</label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
-            className={InputClasses}
-          />
-        </div>
-      </Step> */}
-
             {/* Final Step */}
             <Step>
               <div className={CardClasses}>
-                <h2 className="text-2xl font-bold text-white-700 mb-4">
+                <h2 className="text-2xl font-bold text-sky-400 mb-4">
                   Final Step: Ready to Practice! 🎉
                 </h2>
-                <p className="text-gray-300 leading-relaxed mb-5">
+                <p className="text-gray-400 leading-relaxed mb-5">
                   You've set up your interview profile. Review the details below
                   and click **Complete** to begin your mock interview.
                 </p>
