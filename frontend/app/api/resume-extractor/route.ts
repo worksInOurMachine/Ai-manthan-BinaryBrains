@@ -56,7 +56,7 @@ Goal: Return structured data that can prefill the interview setup UI (candidate 
 
   let content = data?.choices?.[0]?.message?.content?.trim() || "";
 
-  console.log("Generated Resume Extraction:", content);
+  // console.log("Generated Resume Extraction:", content);
 
     return new Response(content, {
       status: 200,
