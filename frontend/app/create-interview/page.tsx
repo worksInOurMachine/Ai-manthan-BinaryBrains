@@ -190,17 +190,6 @@ function Page() {
             </h2>
 
             <div className="mb-6">
-              <label className={LabelClasses}>Candidate Name</label>
-              <input
-                type="text"
-                value={candidateName}
-                onChange={(e) => setCandidateName(e.target.value)}
-                placeholder="Enter candidate name"
-                className={InputClasses}
-              />
-            </div>
-
-            <div className="mb-6">
               <label className={LabelClasses}>
                 Upload Resume ( Autofill with AI )
               </label>
@@ -215,6 +204,17 @@ function Page() {
                   Selected: {resume.name}
                 </p>
               )}
+            </div>
+
+            <div className="mb-6">
+              <label className={LabelClasses}>Candidate Name</label>
+              <input
+                type="text"
+                value={candidateName}
+                onChange={(e) => setCandidateName(e.target.value)}
+                placeholder="Enter candidate name"
+                className={InputClasses}
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

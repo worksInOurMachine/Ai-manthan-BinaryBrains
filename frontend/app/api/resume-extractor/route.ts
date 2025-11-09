@@ -28,7 +28,7 @@ Your output must be a **strict JSON object** matching the structure below — no
 1. Output **only valid JSON**, no extra characters or text dont give '''json just start with { and end with }.
 2. Include all keys, even if null or empty.
 3. Use concise values — no long paragraphs.
-4. For 'skills', join them as a comma-separated string for easier use in forms.
+4. For 'skills', join them as a comma-separated string for easier use in forms but remember if it have space in it (critical thinking) then write it as (criticalThinking).
 5. For 'topic', prefer the job title, specialization, or last relevant role.
 6. If unsure, set 'difficulty' to "medium" and 'mode' to "Technical".
 7. Do **not** guess unrelated information.
