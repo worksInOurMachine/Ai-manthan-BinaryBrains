@@ -61,7 +61,7 @@ export function useChat() {
         : {
             id: crypto.randomUUID(),
             role: "user",
-            content: content.trim(),
+            content: [{ type: "text", text: content.trim() }],
             timestamp: new Date(),
           };
 

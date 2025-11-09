@@ -73,7 +73,7 @@ export async function POST(req: Request) {
         "X-Title": "VOID AI",
       },
       body: JSON.stringify({
-        model: model || "openai",
+        model: "mistral",
         stream: isStream || false,
         messages: [systemtPrompt, ...messages],
       }),
