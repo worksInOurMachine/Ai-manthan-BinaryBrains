@@ -124,8 +124,8 @@ function Page() {
   };
 
   // --- STYLES ---
-  const InputClasses = `p-3 w-full bg-white/10 text-white rounded-lg border border-sky-500 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition duration-150 ease-in-out shadow-sm backdrop-blur-md`;
-  const SelectClasses = `${InputClasses} appearance-none cursor-pointer`;
+  const InputClasses = `p-3 w-full bg-white/70 text-black rounded-lg border border-sky-500 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition duration-150 ease-in-out shadow-sm backdrop-blur-md`;
+  const SelectClasses = `${InputClasses}  cursor-pointer`;
   const LabelClasses = "block font-semibold mb-2 text-sky-300 text-base";
   const CardClasses =
     "p-8 w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg border border-sky-600/20";
@@ -200,7 +200,9 @@ function Page() {
             </div>
 
             <div className="mb-6">
-              <label className={LabelClasses}>Upload Resume (optional)</label>
+              <label className={LabelClasses}>
+                Upload Resume ( Autofill with AI )
+              </label>
               <input
                 type="file"
                 onChange={handleFileChange}
