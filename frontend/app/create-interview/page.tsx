@@ -159,7 +159,7 @@ function Page() {
 
   // --- MAIN UI ---
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center py-16 bg-gradient-to-b from-gray-900 via-sky-950 to-black text-white">
+    <div className="relative min-h-screen flex flex-col items-center backdrop-blur-sm justify-center py-16 bg-transparent text-white">
       <Stepper
         initialStep={initialStep}
         onFinalStepCompleted={handleSubmitFinal}
@@ -170,7 +170,7 @@ function Page() {
         {/* Step 1 */}
         <Step>
           <div className={CardClasses}>
-            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-300 mb-4 text-center">
+            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-500 mb-4 text-center">
               Welcome to Your AI Interview 🚀
             </h2>
             <p className="text-gray-300 text-center leading-relaxed">
