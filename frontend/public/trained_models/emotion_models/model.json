@@ -1,0 +1,71 @@
+{
+  "format": "layers-model",
+  "generatedBy": "keras v2.4.0",
+  "convertedBy": "TensorFlow.js Converter v4.0.0",
+  "modelTopology": {
+    "class_name": "Sequential",
+    "config": {
+      "name": "emotion_model",
+      "layers": [
+        {
+          "class_name": "InputLayer",
+          "config": {
+            "batch_input_shape": [null, 48, 48, 1],
+            "dtype": "float32",
+            "name": "input_1"
+          }
+        },
+        {
+          "class_name": "Conv2D",
+          "config": {
+            "filters": 32,
+            "kernel_size": [3, 3],
+            "activation": "relu",
+            "name": "conv2d_1"
+          }
+        },
+        {
+          "class_name": "Flatten",
+          "config": {
+            "name": "flatten_1"
+          }
+        },
+        {
+          "class_name": "Dense",
+          "config": {
+            "units": 7,
+            "activation": "softmax",
+            "name": "dense_1"
+          }
+        }
+      ]
+    }
+  },
+  "weightsManifest": [
+    {
+      "paths": ["group1-shard1.bin"],
+      "weights": [
+        {
+          "name": "conv2d_1/kernel",
+          "shape": [3, 3, 1, 32],
+          "dtype": "float32"
+        },
+        {
+          "name": "conv2d_1/bias",
+          "shape": [32],
+          "dtype": "float32"
+        },
+        {
+          "name": "dense_1/kernel",
+          "shape": [73728, 7],
+          "dtype": "float32"
+        },
+        {
+          "name": "dense_1/bias",
+          "shape": [7],
+          "dtype": "float32"
+        }
+      ]
+    }
+  ]
+}

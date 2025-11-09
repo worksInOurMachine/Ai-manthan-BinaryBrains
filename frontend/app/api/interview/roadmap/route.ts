@@ -2,7 +2,7 @@ export async function POST(req: Request) {
   try {
     const { roadmapDetails } = await req.json();
 
-    const model = "openai-fast";
+    const model = "mistral";
 
     const systemPrompt = `
  You are a Professional AI Roadmap Generator.

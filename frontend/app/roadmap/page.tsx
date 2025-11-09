@@ -42,7 +42,7 @@ const page = () => {
         .trim();
 
       // Convert to object
-      // console.log(JSON.parse(cleaned));
+       console.log(JSON.parse(cleaned));
       setRoadmap(JSON.parse(cleaned));
       window.localStorage.setItem("roadmap", cleaned);
     } catch (error) {
