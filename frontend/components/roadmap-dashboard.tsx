@@ -1,59 +1,85 @@
- "use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import SkillsOverview from "./skills-overview"
-import MonthCard from "./month-card"
-import ResourcesSection from "./resources-section"
-import CapstoneSection from "./capstone-section"
-import { Button } from "./ui/button"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Icon,
+  SparkleIcon,
+  Sparkles,
+} from "lucide-react";
+import SkillsOverview from "./skills-overview";
+import MonthCard from "./month-card";
+import ResourcesSection from "./resources-section";
+import CapstoneSection from "./capstone-section";
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 interface RoadmapData {
-  [key: string]: any
+  [key: string]: any;
 }
 
-export default function RoadmapDashboard({ data, handleDownload, handleGenerateNew }: { data: RoadmapData, handleDownload: () => void, handleGenerateNew: () => void }) {
+export default function RoadmapDashboard({
+  data,
+  handleDownload,
+  handleGenerateNew,
+}: {
+  data: RoadmapData;
+  handleDownload: () => void;
+  handleGenerateNew: () => void;
+}) {
   const router = useRouter();
-  const [selectedMonth, setSelectedMonth] = useState(1)
+  const [selectedMonth, setSelectedMonth] = useState(1);
 
-  const monthRoadmap = data["3. Month-by-Month Roadmap"] || {}
-  const totalMonths = Object.keys(monthRoadmap).length
+  const monthRoadmap = data["3. Month-by-Month Roadmap"] || {};
+  const totalMonths = Object.keys(monthRoadmap).length;
 
   const getCurrentMonthData = () => {
-    const monthKey = `Month ${selectedMonth}`
-    return monthRoadmap[monthKey]
-  }
+    const monthKey = `Month ${selectedMonth}`;
+    return monthRoadmap[monthKey];
+  };
 
   const handlePrevMonth = () => {
-    setSelectedMonth((prev) => (prev === 1 ? totalMonths : prev - 1))
-  }
+    setSelectedMonth((prev) => (prev === 1 ? totalMonths : prev - 1));
+  };
 
   const handleNextMonth = () => {
-    setSelectedMonth((prev) => (prev === totalMonths ? 1 : prev + 1))
-  }
+    setSelectedMonth((prev) => (prev === totalMonths ? 1 : prev + 1));
+  };
 
   return (
     <div className="min-h-screen bg-transparent h-full p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-         <div className=" flex justify-between items-center">
-           <h1 className="text-4xl md:text-5xl font-bold text-balance mb-4">{data["title"]}</h1>
-           <div className=" flex gap-2">
-                 <Button className=" cursor-pointer" onClick={handleDownload}>
+          <div className=" flex justify-between items-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-balance mb-4">
+              {data["title"]}
+            </h1>
+            <div className=" flex gap-2">
+              <Button
+                className=" cursor-pointer bg-blue-600 text-white hover:bg-blue-500"
+                onClick={handleDownload}
+              >
                 Download
               </Button>
-              <Button className=" cursor-pointer" onClick={()=>router.push("/chat")}>
-                Chat
-              </Button>
-                  <Button className=" cursor-pointer" onClick={()=>{
-               handleGenerateNew()}}>
+              {/* <Button className=" cursor-pointer" onClick={() => }>
+                Ask AI <Sparkles />
+              </Button> */}
+              <Button
+                variant="outline"
+                className=" cursor-pointer bg-transparent text-white hover:text-white/80 border border-blue-600"
+                onClick={() => {
+                  handleGenerateNew();
+                }}
+              >
                 Generate New
               </Button>
-           </div>
-         </div>
-          <p className="text-lg text-muted-foreground">{data["1. Job Role Overview"]}</p>
+            </div>
+          </div>
+          <p className="text-lg text-muted-foreground">
+            {data["1. Job Role Overview"]}
+          </p>
         </div>
 
         {/* Skills Overview */}
@@ -87,8 +113,8 @@ export default function RoadmapDashboard({ data, handleDownload, handleGenerateN
           {/* Month Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {Array.from({ length: totalMonths }, (_, i) => {
-              const monthNum = i + 1
-              const monthData = monthRoadmap[`Month ${monthNum}`]
+              const monthNum = i + 1;
+              const monthData = monthRoadmap[`Month ${monthNum}`];
               return (
                 <button
                   key={monthNum}
@@ -102,7 +128,7 @@ export default function RoadmapDashboard({ data, handleDownload, handleGenerateN
                   <div className="font-semibold  mb-2">Month {monthNum}</div>
                   <div className="text-sm">{monthData.Topics?.[0]}</div>
                 </button>
-              )
+              );
             })}
           </div>
 
@@ -120,15 +146,19 @@ export default function RoadmapDashboard({ data, handleDownload, handleGenerateN
         <div className="mt-12 bg-card border border-border rounded-lg p-8">
           <h3 className="text-2xl font-bold mb-6">Pro Tips for Success</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.entries(data["6. Extra Tips"] || {}).map(([key, value]:any) => (
-              <div key={key} className="flex flex-col gap-3">
-                <h4 className="font-semibold text-accent text-lg">{key}</h4>
-               <p className="text-muted-foreground text-sm leading-relaxed">{value}</p>
-              </div>
-            ))}
+            {Object.entries(data["6. Extra Tips"] || {}).map(
+              ([key, value]: any) => (
+                <div key={key} className="flex flex-col gap-3">
+                  <h4 className="font-semibold text-accent text-lg">{key}</h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {value}
+                  </p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

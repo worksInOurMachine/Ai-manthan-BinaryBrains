@@ -45,7 +45,6 @@ const page = () => {
       // console.log(JSON.parse(cleaned));
       setRoadmap(JSON.parse(cleaned));
       window.localStorage.setItem("roadmap", cleaned);
-
     } catch (error) {
       setError(error);
       setGenerateRoadmap(false);
@@ -160,23 +159,23 @@ const page = () => {
 
     doc.save("roadmap.pdf");
   };
-const handleGenerateNew = () => {
-  setGenerateRoadmap(false);
-  setRoadmap(null);
-  setError(null);
-  setFormData({
-    jobRole: "",
-    skills: "",
-    duration: 6,
-  });
-};
-  useEffect(()=>{
+  const handleGenerateNew = () => {
+    setGenerateRoadmap(false);
+    setRoadmap(null);
+    setError(null);
+    setFormData({
+      jobRole: "",
+      skills: "",
+      duration: 6,
+    });
+  };
+  useEffect(() => {
     const roadmap = window.localStorage.getItem("roadmap");
     if (roadmap) {
       setRoadmap(JSON.parse(roadmap));
       setGenerateRoadmap(true);
     }
-  },[])
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -190,9 +189,10 @@ const handleGenerateNew = () => {
         </>
       ) : (
         <div className="mt-10">
-          {generateRoadmap && loading && <div>
-               <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
-                      {/* <div style={{ width: "25%", height: "150px" }}>
+          {generateRoadmap && loading && (
+            <div>
+              <div className="flex justify-center flex-col gap-8 items-center w-full h-[80vh]">
+                {/* <div style={{ width: "25%", height: "150px" }}>
                         <Orb
                           hoverIntensity={0.5}
                           rotateOnHover={true}
@@ -200,20 +200,26 @@ const handleGenerateNew = () => {
                           forceHoverState={false}
                         />
                       </div> */}
-                      <TrueFocus
-                        sentence="Generating Roadmap"
-                        manualMode={false}
-                        blurAmount={5}
-                        borderColor="blue"
-                        animationDuration={2}
-                        pauseBetweenAnimations={1}
-                      />
-                    </div>
-            </div>}
+                <TrueFocus
+                  sentence="Generating Roadmap"
+                  manualMode={false}
+                  blurAmount={5}
+                  borderColor="blue"
+                  animationDuration={2}
+                  pauseBetweenAnimations={1}
+                />
+              </div>
+            </div>
+          )}
           {error && <div>Error: {error}</div>}
 
-          {roadmap && <Roadmap data={roadmap} handleDownload={handleDownload} handleGenerateNew={handleGenerateNew} />}
-        
+          {roadmap && (
+            <Roadmap
+              data={roadmap}
+              handleDownload={handleDownload}
+              handleGenerateNew={handleGenerateNew}
+            />
+          )}
         </div>
       )}
     </div>
