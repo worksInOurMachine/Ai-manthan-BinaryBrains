@@ -40,7 +40,7 @@ export default function HomePage() {
               Start Practicing ↗
             </Link>
             <Link
-              href="#features"
+              href="/roadmap-chat"
               // Secondary button with solid border and subtle hover
               className="rounded-lg border border-sky-500/70 bg-transparent px-8 py-3 text-sm font-medium text-sky-300 hover:bg-blue-800/30 hover:text-white transition-all duration-300 hover:shadow-sky-500/20"
             >

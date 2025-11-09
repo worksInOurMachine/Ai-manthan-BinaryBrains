@@ -1,8 +1,9 @@
 "use client";
-// import Orb from "@/components/Orb";
+
 import TrueFocus from "@/components/TrueFocus";
 import Stepper, { Step } from "@/components/ui/stepper";
 import { strapi } from "@/lib/api/sdk";
+import { Sparkles } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -124,12 +125,12 @@ function Page() {
   };
 
   // --- STYLES ---
-  const InputClasses = `p-3 w-full bg-white/70 text-black rounded-lg border border-sky-500 focus:ring-2 focus:ring-sky-400 focus:border-sky-400 transition duration-150 ease-in-out shadow-sm backdrop-blur-md`;
-  const SelectClasses = `${InputClasses}  cursor-pointer`;
-  const LabelClasses = "block font-semibold mb-2 text-sky-300 text-base";
+  const InputClasses = `p-3 w-full bg-white/10 text-white placeholder-white/70 rounded-lg border border-sky-400 focus:ring-2 focus:ring-sky-300 focus:border-sky-300 transition duration-150 ease-in-out shadow-sm backdrop-blur-md`;
+  const SelectClasses = `${InputClasses} cursor-pointer`;
+  const LabelClasses = "block font-semibold mb-2 text-white text-base";
   const CardClasses =
-    "p-8 w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg border border-sky-600/20";
-  const FileInputClasses = `w-full text-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-700/80 file:text-white hover:file:bg-sky-600/90`;
+    "p-8 w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg border border-sky-400/20";
+  const FileInputClasses = `w-full text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-700/80 file:text-white hover:file:bg-sky-600/90`;
 
   // --- LOADING STATES ---
   if (
@@ -159,7 +160,7 @@ function Page() {
 
   // --- MAIN UI ---
   return (
-    <div className="relative min-h-screen flex flex-col items-center backdrop-blur-sm justify-center py-16 bg-transparent text-white">
+    <div className="relative min-h-screen flex flex-col items-center justify-center py-16 bg-transparent text-white">
       <Stepper
         initialStep={initialStep}
         onFinalStepCompleted={handleSubmitFinal}
@@ -170,10 +171,10 @@ function Page() {
         {/* Step 1 */}
         <Step>
           <div className={CardClasses}>
-            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-500 mb-4 text-center">
-              Welcome to Your AI Interview 🚀
+            <h2 className="text-3xl font-bold text-white mb-4 text-center">
+              Welcome to Your AI Interview <Sparkles className="inline-block" />
             </h2>
-            <p className="text-gray-300 text-center leading-relaxed">
+            <p className="text-white/80 text-center leading-relaxed">
               Let’s set up your personalized interview experience. Follow the
               steps to configure your skills, difficulty, and role for the best
               AI-generated mock interview.
@@ -184,7 +185,7 @@ function Page() {
         {/* Step 2 */}
         <Step>
           <div className={CardClasses}>
-            <h2 className="text-2xl font-bold text-sky-300 mb-6 text-center">
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">
               Step 2: Core Setup 🛠️
             </h2>
 
@@ -210,7 +211,7 @@ function Page() {
                 className={FileInputClasses}
               />
               {resume && (
-                <p className="mt-2 text-sm text-green-400">
+                <p className="mt-2 text-sm text-white/70">
                   Selected: {resume.name}
                 </p>
               )}
@@ -248,7 +249,7 @@ function Page() {
         {/* Step 3 */}
         <Step>
           <div className={CardClasses}>
-            <h2 className="text-2xl font-bold text-sky-300 mb-6 text-center">
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">
               Step 3: Focus Area 🎯
             </h2>
 
@@ -281,7 +282,7 @@ function Page() {
         {/* Step 4 */}
         <Step>
           <div className={CardClasses}>
-            <h2 className="text-2xl font-bold text-sky-300 mb-6 text-center">
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">
               Step 4: Interview Length ⏱️
             </h2>
             <label className={LabelClasses}>Number of Questions</label>
@@ -302,10 +303,10 @@ function Page() {
         {/* Final */}
         <Step>
           <div className={CardClasses + " text-center"}>
-            <h2 className="text-2xl font-bold text-sky-300 mb-4">
+            <h2 className="text-2xl font-bold text-white mb-4">
               Final Step 🎉
             </h2>
-            <p className="text-gray-300">
+            <p className="text-white/80">
               You’re all set! Click <strong>Complete</strong> to start your
               AI-powered interview simulation.
             </p>
