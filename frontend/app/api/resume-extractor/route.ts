@@ -52,10 +52,7 @@ Goal: Return structured data that can prefill the interview setup UI (candidate 
     const data = await response.json();
 
     let content = data?.choices?.[0]?.message?.content?.trim() || "";
-    const cleaned = content
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+    const cleaned = content?.replace(/```json/g, "")?.replace(/```/g, "")?.trim();
     console.log("Generated Resume Extraction:", cleaned);
 
     return new Response(cleaned, {
