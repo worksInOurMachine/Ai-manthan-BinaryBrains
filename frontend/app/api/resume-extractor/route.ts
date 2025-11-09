@@ -10,7 +10,7 @@ Your output must be a **strict JSON object** matching the structure below — no
 
 {
   "candidateName": "Full name of the candidate",
-  "skills": "Comma-separated list of main skills or technologies (e.g., React, Node.js, MongoDB)",
+  "skills": "Comma-separated list of main skills or technologies (e.g., React,Node.js,MongoDB) and also in camelCases without spaces",
   "topic": "Job role or specialization (e.g., Frontend Developer, Data Analyst)",
   "difficulty": "easy | medium | hard (estimate based on experience or skill level, use 'medium' if unclear)",
   "mode": "Technical | HR (guess based on resume focus, default to Technical)",
