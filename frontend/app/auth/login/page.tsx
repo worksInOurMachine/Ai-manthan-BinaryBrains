@@ -8,6 +8,9 @@ import Link from "next/link";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+const handleRedirect = (redirectRoute: string) => {
+  window.location.replace(redirectRoute);
+};
 export default function SignupFormDemo() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -26,7 +29,7 @@ export default function SignupFormDemo() {
           JSON.parse(localStorage.getItem("redirectRoute")!)! || "/";
         localStorage.removeItem("redirectRoute");
         router.refresh();
-        router.push(redirectRoute);
+        handleRedirect(redirectRoute);
       } else {
         toast.error("Invalid Email or Password");
       }
